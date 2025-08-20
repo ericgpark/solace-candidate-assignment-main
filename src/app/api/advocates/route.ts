@@ -4,14 +4,12 @@ import { advocates } from "../../../db/schema";
 import type { Advocate } from "../../types/index";
 
 
-export async function GET(
-  res: NextApiResponse<Advocate[] | { error: string }>
-) {
+export async function GET() {
   // Fetch advocates from the database
   const dbData = await db.select().from(advocates);
 
   if (!dbData || dbData.length === 0) {
-    return res.status(404).json({ error: "No advocates found" });
+    return Response.json({ error: "No advocates found" }, { status: 404 });
   }
 
   // Map the database data to the Advocate type
@@ -21,5 +19,5 @@ export async function GET(
     createdAt: advocate.createdAt ? advocate.createdAt.toISOString() : undefined,
   }));
 
-  return res.status(200).json(data);
+  return Response.json({ data });
 }
