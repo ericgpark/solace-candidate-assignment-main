@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Advocate } from "./types";
+import { debounce } from "./helpers/debounce";
 
 export default function Home() {
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -18,6 +19,27 @@ export default function Home() {
     });
   }, []);
 
+  const filterAdvocates = ({ searchTerm, advocates }: { searchTerm: string, advocates: Advocate[] }) => {
+    console.log("filtering advocates...");
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    const filteredAdvocates = advocates.filter((advocate: Advocate) => {
+      return (
+        advocate.firstName.toLowerCase().includes(lowerCaseSearchTerm) ||
+        advocate.lastName.toLowerCase().includes(lowerCaseSearchTerm) ||
+        advocate.city.toLowerCase().includes(lowerCaseSearchTerm) ||
+        advocate.degree.toLowerCase().includes(lowerCaseSearchTerm) ||
+        advocate.yearsOfExperience.toString().includes(lowerCaseSearchTerm) ||
+        advocate.phoneNumber.toString().includes(lowerCaseSearchTerm) ||
+        advocate.specialties.find((specialty) => specialty.toLowerCase().includes(lowerCaseSearchTerm))
+      );
+    });
+
+    setFilteredAdvocates(filteredAdvocates);
+  }
+
+  const debouncedFilter = debounce(filterAdvocates);
+
+
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchTerm = e.target.value;
 
@@ -32,21 +54,8 @@ export default function Home() {
       return;
     }
 
-    console.log("filtering advocates...");
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    const filteredAdvocates = advocates.filter((advocate: Advocate) => {
-      return (
-        advocate.firstName.toLowerCase().includes(lowerCaseSearchTerm) ||
-        advocate.lastName.toLowerCase().includes(lowerCaseSearchTerm) ||
-        advocate.city.toLowerCase().includes(lowerCaseSearchTerm) ||
-        advocate.degree.toLowerCase().includes(lowerCaseSearchTerm) ||
-        advocate.yearsOfExperience.includes(lowerCaseSearchTerm) ||
-        advocate.phoneNumber.includes(lowerCaseSearchTerm) ||
-        advocate.specialties.find((specialty) => specialty.toLowerCase().includes(lowerCaseSearchTerm))
-      );
-    });
-
-    setFilteredAdvocates(filteredAdvocates);
+    // Debounce the filtering function to avoid excessive calls
+    debouncedFilter({ searchTerm, advocates });
   };
 
   const onClick = () => {
@@ -55,7 +64,7 @@ export default function Home() {
   };
 
   return (
-    <main style={{ margin: "24px" }}>
+    <main>
       <h1>Solace Advocates</h1>
       <br />
       <br />

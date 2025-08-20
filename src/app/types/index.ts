@@ -4,7 +4,7 @@ export interface Advocate {
   lastName: string;
   city: string;
   degree: string;
-  phoneNumber: string;
   specialties: string[];
-  yearsOfExperience: string;
+  yearsOfExperience: number;
+  phoneNumber: number;
 }
