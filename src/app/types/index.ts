@@ -1,5 +1,5 @@
 export interface Advocate {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
   city: string;
@@ -7,4 +7,5 @@ export interface Advocate {
   specialties: string[];
   yearsOfExperience: number;
   phoneNumber: number;
+  createdAt?: string;
 }
